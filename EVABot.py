@@ -81,7 +81,7 @@ class EVABot(object):
         try:
             console.print('Capturing screen', 0)
             self.getScreen()
-        except ValueError:
+        except (ValueError, subprocess.CalledProcessError):
             console.print(f'{console.icho.bold}{console.icho.red}'
                           'Error capturing screen'
                           f'{console.icho.normal}', 0)
@@ -123,8 +123,8 @@ class EVABot(object):
             subprocess.call(command_array)
 
     @staticmethod
-    def run(ip_address : str = None, fileName : str = 'views.json', sleepTime : int = 100):
-        tmpDaemon = EVABot(ip_address=ip_address)
+    def run(ip_address : str = None, fileName : str = 'views.json', sleepTime : int = 100,runFromDevice : bool = False):
+        tmpDaemon = EVABot(ip_address=ip_address, runFromDevice=runFromDevice)
         tmpDaemon.loadConfFile(fileName)
         idx = 0
         while True:
