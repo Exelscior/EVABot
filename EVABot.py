@@ -58,9 +58,11 @@ class EVABot(object):
         import json
         jsonData = Path(fileName).read_text()
         viewData = json.loads(jsonData)[View.VIEW_ID]
+        del jsonData
         self.viewList = []
         for viewID in viewData:
             self.viewList.append(View.loadFromDict(viewData[viewID]))
+        del viewData
         self.viewList = tuple(self.viewList)
 
     def getScreen(self):
@@ -68,7 +70,9 @@ class EVABot(object):
             screenData = subprocess.check_output(('su', '-c', 'screencap'))
         else:
             screenData = subprocess.check_output(('adb', 'shell', 'screencap'))
+        del self._tmpImage
         self._tmpImage = Image.frombytes('RGBA', self.screenSize, screenData)
+        del screenData
         return True
 
     def reconnect(self):
@@ -132,3 +136,7 @@ class EVABot(object):
                 sleep((sleepTime / 1000) + (idx // 10))
                 idx += 1
             else: idx = 0
+
+
+if __name__=='__main__':
+    EVABot.run(ip_address='192.168.43.1:5555', sleepTime=400)
