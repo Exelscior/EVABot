@@ -1,9 +1,9 @@
-import subprocess
+import subprocess, tempfile
 from PIL import Image
 from pathlib import Path
 from time import sleep
 from View import View
-from utils import Vector2, TouchVector2, console
+from utils import Vector2, TouchVector2#, console
 
 class EVABot(object):
 
@@ -67,9 +67,9 @@ class EVABot(object):
 
     def getScreen(self):
         if self.runFromDevice:
-            screenData = subprocess.check_output(('su', '-c', 'screencap'))
+            screenData = subprocess.run(('su', '-c', 'screencap'), stdout=subprocess.PIPE).stdout
         else:
-            screenData = subprocess.check_output(('adb', 'shell', 'screencap'))
+            screenData = subprocess.run(('adb', 'shell', 'screencap'), stdout=subprocess.PIPE).stdout
         del self._tmpImage
         self._tmpImage = Image.frombytes('RGBA', self.screenSize, screenData)
         del screenData
@@ -83,29 +83,33 @@ class EVABot(object):
 
     def checkForView(self):
         try:
-            console.print('Capturing screen', 0)
+ #           console.print('Capturing screen', 0)
             self.getScreen()
         except (ValueError, subprocess.CalledProcessError):
-            console.print(f'{console.icho.bold}{console.icho.red}'
-                          'Error capturing screen'
-                          f'{console.icho.normal}', 0)
+            # console.print(f'{console.icho.bold}{console.icho.red}'
+            #               'Error capturing screen'
+            #               f'{console.icho.normal}', 0)
+            print('Error capturing screen')
             self.reconnect()
             return False
         idx = len(self.viewList)
         for view in self.viewList:
             position = (len(self.viewList) - idx) // len(self.viewList)
-            console.print(f'View: {view.name}', position)
+#            console.print(f'View: {view.name}', position)
             idx -= 1
             if view.isView(self._tmpImage):
-                console.print(f'View: {view.name} '
-                              f'{console.icho.bold}'
-                              f'{console.icho.cyan}'
-                              f'OK{console.icho.normal}', 1)
+                # console.print(f'View: {view.name} '
+                #               f'{console.icho.bold}'
+                #               f'{console.icho.cyan}'
+                #               f'OK{console.icho.normal}', 1)
                 for touch in view.touchArray:
                     self.touchScreen(touch)
                     sleep(view.touchDelay / 1000)
+                for longTouch in view.longTouchArray:
+                    self.longTouchScreen(longTouch)
+                    sleep(view.touchDelay / 1000)
                 return True
-        console.print('No view found', 1)
+#        console.print('No view found', 1)
         return False
 
     def touchScreen(self, position : Vector2):

@@ -46,6 +46,7 @@ def collectNewPixelValues(fileName : str = 'views.json', save : bool = False):
                 print(f'For pixel ({pixel[0]}, {pixel[1]}) found {hexString} expected {pixel[2]}')
             jsonData['views'][viewID]["searchPixels"][pixelID][2] = hexString
         viewIm.close()
+        print('OK')
     if save:
         with open(fileName, 'w') as newFile:
             newFile.write(json.dumps(jsonData))
@@ -85,4 +86,4 @@ class RunConsole(object):
         self.lastMessage = message
         self.lastPercentage = percentage
 
-console = RunConsole()
+#console = RunConsole()
