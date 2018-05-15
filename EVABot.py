@@ -70,7 +70,8 @@ class EVABot(object):
             screenData = subprocess.run(('su', '-c', 'screencap'), stdout=subprocess.PIPE).stdout
         else:
             screenData = subprocess.run(('adb', 'shell', 'screencap'), stdout=subprocess.PIPE).stdout
-        del self._tmpImage
+        if hasattr(self, '_tmpImage'):
+            del self._tmpImage
         self._tmpImage = Image.frombytes('RGBA', self.screenSize, screenData)
         del screenData
         return True
