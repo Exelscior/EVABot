@@ -144,4 +144,8 @@ class EVABot(object):
 
 
 if __name__=='__main__':
-    EVABot.run(ip_address='192.168.43.1:5555', sleepTime=400)
+    import platform
+    if platform.machine() == 'x86_64':
+        EVABot.run(sleepTime=400)
+    else:
+        EVABot.run(runFromDevice=True, sleepTime=400)
